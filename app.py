@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Long-Term Market Oracle", layout="wide", page_icon="🧠")
 
 st.title("🧠 Long-Term Market Oracle")
-st.caption("**Advanced LSTM + Transformer Portfolio Report**")
+st.caption("**Advanced Client Portfolio Report**")
 
 st.sidebar.title("Client Report Input")
 client_name = st.sidebar.text_input("Client Name", "Your Client")
@@ -19,7 +19,7 @@ weights_input = st.sidebar.text_input("Weights (comma separated)", "0.4,0.3,0.3"
 horizon = st.sidebar.slider("Horizon (years)", 5, 20, 10)
 
 if st.sidebar.button("🚀 Generate Advanced Report", type="primary"):
-    with st.spinner("Running LSTM + Transformer analysis..."):
+    with st.spinner("Running advanced analysis..."):
         stocks = [s.strip().upper() for s in stocks_input.split(",")]
         try:
             weights = [float(w.strip()) for w in weights_input.split(",")]
@@ -33,19 +33,14 @@ if st.sidebar.button("🚀 Generate Advanced Report", type="primary"):
         future_value = invested_amount * (1 + expected_return)**horizon
         st.write(f"**Expected Portfolio Value in {horizon} years (LSTM + Transformer)**: ${future_value:,.0f}")
         
+        # Holdings summary only
+        st.write("**Portfolio Holdings**")
         for i, stock in enumerate(stocks):
             weight_pct = weights[i] * 100 if i < len(weights) else 100 / len(stocks)
             st.write(f"**{stock}** ({weight_pct:.0f}%)")
-            
-            try:
-                data = yf.download(stock, period="5y", progress=False)
-                if not data.empty:
-                    st.line_chart(data['Close'])
-            except:
-                st.write("Chart temporarily unavailable")
         
         st.write("**Advanced Risk Simulation (LSTM + Transformer + Monte Carlo)**")
-        st.info("Ensemble model combining LSTM, Transformer, and Monte Carlo. The shaded area shows the likely range.")
+        st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
         
         last_price = invested_amount
         sims = 500
@@ -66,4 +61,4 @@ if st.sidebar.button("🚀 Generate Advanced Report", type="primary"):
         ax.legend()
         st.pyplot(fig)
         
-        st.success("✅ Advanced LSTM + Transformer report ready.")
+        st.success("✅ Advanced report ready for client.")
