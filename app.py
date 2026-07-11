@@ -24,7 +24,7 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
         try:
             weights = [float(w.strip()) for w in weights_input.split(",")]
         except:
-            weights = [1.0/len(stocks)] * len(stocks)
+            weights = [1.0 / len(stocks)] * len(stocks)
         
         st.subheader(f"Professional Long-Term Portfolio Report for {client_name}")
         st.write(f"**Invested Amount**: ${invested_amount:,} | **Horizon**: {horizon} years")
@@ -34,24 +34,22 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
         st.write(f"**Expected Portfolio Value in {horizon} years**: ${future_value:,.0f}")
         
         for i, stock in enumerate(stocks):
-            weight_pct = weights[i] * 100 if i < len(weights) else 100/len(stocks)
+            weight_pct = weights[i] * 100 if i < len(weights) else 100 / len(stocks)
             st.write(f"**{stock}** ({weight_pct:.0f}%)")
             
             try:
                 data = yf.download(stock, period="5y", progress=False)
                 if not data.empty:
                     st.line_chart(data['Close'])
-                    last_price = float(data['Close'].iloc[-1])
                 else:
-                    last_price = 100
-                    st.write("No data available for chart")
+                    st.write("Chart data not available at the moment.")
             except:
-                last_price = 100
-                st.write("Chart unavailable")
+                st.write("Chart unavailable (temporary issue with data provider)")
             
             st.write("**Sector Outlook** (JP Morgan): Strong AI and innovation tailwinds.")
             
             st.write("**Risk Simulation**")
+            last_price = float(data['Close'].iloc[-1]) if not data.empty else 100
             sims = 500
             paths = []
             for _ in range(sims):
