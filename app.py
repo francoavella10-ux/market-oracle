@@ -33,6 +33,7 @@ if st.sidebar.button("🚀 Generate Report", type="primary"):
         future_value = invested_amount * (1 + expected_return)**horizon
         st.write(f"**Expected Portfolio Value in {horizon} years**: ${future_value:,.0f}")
         
+        # Individual Stock Charts
         for i, stock in enumerate(stocks):
             weight_pct = weights[i] * 100 if i < len(weights) else 100 / len(stocks)
             st.write(f"**{stock}** ({weight_pct:.0f}%)")
@@ -47,25 +48,27 @@ if st.sidebar.button("🚀 Generate Report", type="primary"):
                 st.write("Chart temporarily unavailable")
             
             st.write("**Sector Outlook** (JP Morgan): Strong AI and innovation tailwinds.")
-            
-            st.write("**Risk Simulation (Monte Carlo)**")
-            st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
-            
-            sims = 500
-            paths = []
-            for _ in range(sims):
-                noise = np.random.normal(0.0004, 0.012, horizon * 252)
-                path = np.cumprod(1 + noise) * 100
-                paths.append(path)
-            paths = np.array(paths)
-            
-            future_dates = pd.date_range(start=pd.Timestamp.today(), periods=horizon*252+1, freq='B')[1:]
-            fig, ax = plt.subplots(figsize=(10, 5))
-            mean_path = paths.mean(axis=0)
-            ax.plot(future_dates, mean_path, '--', label="Mean Path")
-            ax.fill_between(future_dates, np.percentile(paths, 5, axis=0), np.percentile(paths, 95, axis=0), alpha=0.3, label="Likely Range")
-            ax.set_xlabel("Year")
-            ax.legend()
-            st.pyplot(fig)
+        
+        # Portfolio Risk Simulation (shown once)
+        st.write("**Portfolio Risk Simulation (Monte Carlo)**")
+        st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
+        
+        last_price = invested_amount
+        sims = 500
+        paths = []
+        for _ in range(sims):
+            noise = np.random.normal(0.0004, 0.012, horizon * 252)
+            path = np.cumprod(1 + noise) * last_price
+            paths.append(path)
+        paths = np.array(paths)
+        
+        future_dates = pd.date_range(start=pd.Timestamp.today(), periods=horizon*252+1, freq='B')[1:]
+        fig, ax = plt.subplots(figsize=(10, 5))
+        mean_path = paths.mean(axis=0)
+        ax.plot(future_dates, mean_path, '--', label="Mean Path")
+        ax.fill_between(future_dates, np.percentile(paths, 5, axis=0), np.percentile(paths, 95, axis=0), alpha=0.3, label="Likely Range")
+        ax.set_xlabel("Year")
+        ax.legend()
+        st.pyplot(fig)
         
         st.success("✅ Report ready for client.")
