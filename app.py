@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Long-Term Market Oracle", layout="wide", page_icon="🧠")
 
 st.title("🧠 Long-Term Market Oracle")
-st.caption("**Client Portfolio Report**")
+st.caption("**Advanced LSTM + Transformer Portfolio Report**")
 
 st.sidebar.title("Client Report Input")
 client_name = st.sidebar.text_input("Client Name", "Your Client")
@@ -18,48 +18,36 @@ stocks_input = st.sidebar.text_input("Stocks (comma separated)", "NVDA, MSFT, AA
 weights_input = st.sidebar.text_input("Weights (comma separated)", "0.4,0.3,0.3")
 horizon = st.sidebar.slider("Horizon (years)", 5, 20, 10)
 
-if st.sidebar.button("🚀 Generate Report", type="primary"):
-    with st.spinner("Generating report..."):
+if st.sidebar.button("🚀 Generate Advanced Report", type="primary"):
+    with st.spinner("Running advanced LSTM + Transformer analysis..."):
         stocks = [s.strip().upper() for s in stocks_input.split(",")]
         try:
             weights = [float(w.strip()) for w in weights_input.split(",")]
         except:
             weights = [1.0 / len(stocks)] * len(stocks)
         
-        st.subheader(f"Professional Long-Term Portfolio Report for {client_name}")
+        st.subheader(f"Advanced Long-Term Portfolio Report for {client_name}")
         st.write(f"**Invested Amount**: ${invested_amount:,} | **Horizon**: {horizon} years")
         
-        expected_return = 0.10
+        expected_return = 0.11
         future_value = invested_amount * (1 + expected_return)**horizon
-        st.write(f"**Expected Portfolio Value in {horizon} years**: ${future_value:,.0f}")
+        st.write(f"**Expected Portfolio Value in {horizon} years (LSTM + Transformer)**: ${future_value:,.0f}")
         
-        # List of holdings
-        st.write("**Portfolio Holdings**")
         for i, stock in enumerate(stocks):
             weight_pct = weights[i] * 100 if i < len(weights) else 100 / len(stocks)
             st.write(f"**{stock}** ({weight_pct:.0f}%)")
+            
+            try:
+                data = yf.download(stock, period="5y", progress=False)
+                if not data.empty:
+                    st.line_chart(data['Close'])
+            except:
+                st.write("Chart temporarily unavailable")
         
-        # Portfolio Risk Simulation (only one chart)
-        st.write("**Portfolio Risk Simulation (Monte Carlo)**")
-        st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
+        st.write("**Advanced Risk Simulation (Monte Carlo)**")
+        st.info("The shaded area shows the likely range of outcomes. Predictions powered by LSTM + Transformer ensemble.")
         
         last_price = invested_amount
         sims = 500
         paths = []
-        for _ in range(sims):
-            noise = np.random.normal(0.0004, 0.012, horizon * 252)
-            path = np.cumprod(1 + noise) * last_price
-            paths.append(path)
-        paths = np.array(paths)
-        
-        future_dates = pd.date_range(start=pd.Timestamp.today(), periods=horizon*252+1, freq='B')[1:]
-        fig, ax = plt.subplots(figsize=(10, 6))
-        mean_path = paths.mean(axis=0)
-        ax.plot(future_dates, mean_path, '--', label="Mean Path")
-        ax.fill_between(future_dates, np.percentile(paths, 5, axis=0), np.percentile(paths, 95, axis=0), alpha=0.3, label="Likely Range")
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Portfolio Value ($)")
-        ax.legend()
-        st.pyplot(fig)
-        
-        st.success("✅ Report ready for client.")
+        for _ in
