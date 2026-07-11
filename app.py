@@ -1,4 +1,3 @@
-cat > app.py << 'EOF'
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -61,4 +60,3 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
             st.pyplot(fig)
         
         st.success("✅ Beautiful report ready for client.")
-EOF
