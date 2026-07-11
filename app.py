@@ -33,18 +33,13 @@ if st.sidebar.button("🚀 Generate Report", type="primary"):
         future_value = invested_amount * (1 + expected_return)**horizon
         st.write(f"**Expected Portfolio Value in {horizon} years**: ${future_value:,.0f}")
         
-        # Show individual stocks
+        # List of holdings
+        st.write("**Portfolio Holdings**")
         for i, stock in enumerate(stocks):
             weight_pct = weights[i] * 100 if i < len(weights) else 100 / len(stocks)
             st.write(f"**{stock}** ({weight_pct:.0f}%)")
-            try:
-                data = yf.download(stock, period="5y", progress=False)
-                if not data.empty:
-                    st.line_chart(data['Close'])
-            except:
-                st.write("Chart temporarily unavailable")
         
-        # Portfolio Risk Simulation (shown once)
+        # Portfolio Risk Simulation (only one chart)
         st.write("**Portfolio Risk Simulation (Monte Carlo)**")
         st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
         
