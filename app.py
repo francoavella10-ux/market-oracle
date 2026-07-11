@@ -1,3 +1,4 @@
+cat > app.py << 'EOF'
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,7 +10,7 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Long-Term Market Oracle", layout="wide", page_icon="🧠")
 
 st.title("🧠 Long-Term Market Oracle")
-st.caption("**Beautiful Client Report**")
+st.caption("**Client Report**")
 
 st.sidebar.title("Client Report Input")
 client_name = st.sidebar.text_input("Client Name", "Your Client")
@@ -18,7 +19,7 @@ stocks_input = st.sidebar.text_input("Stocks (comma separated)", "NVDA, MSFT, AA
 weights_input = st.sidebar.text_input("Weights (comma separated)", "0.4,0.3,0.3")
 horizon = st.sidebar.slider("Horizon (years)", 5, 20, 10)
 
-if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
+if st.sidebar.button("🚀 Generate Report", type="primary"):
     with st.spinner("Generating report..."):
         stocks = [s.strip().upper() for s in stocks_input.split(",")]
         try:
@@ -71,4 +72,5 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
             ax.legend()
             st.pyplot(fig)
         
-        st.success("✅ Beautiful report ready for client.")
+        st.success("✅ Report ready for client.")
+EOF
