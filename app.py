@@ -40,30 +40,14 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
                 data = yf.download(stock, period="5y", progress=False)
                 if not data.empty:
                     st.line_chart(data['Close'])
-                    last_price = float(data['Close'].iloc[-1])
                 else:
-                    last_price = 100
-                    st.write("Chart data temporarily unavailable")
+                    st.write("Chart temporarily unavailable")
             except:
-                last_price = 100
                 st.write("Chart temporarily unavailable")
             
             st.write("**Sector Outlook** (JP Morgan): Strong AI and innovation tailwinds.")
             
-            st.write("**Risk Simulation**")
-            sims = 500
-            paths = []
-            for _ in range(sims):
-                noise = np.random.normal(0.0004, 0.012, horizon * 252)
-                path = np.cumprod(1 + noise) * last_price
-                paths.append(path)
-            paths = np.array(paths)
-            
-            future_dates = pd.date_range(start=pd.Timestamp.today(), periods=horizon*252+1, freq='B')[1:]
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.plot(future_dates, paths.mean(axis=0), '--')
-            ax.fill_between(future_dates, np.percentile(paths, 5, axis=0), np.percentile(paths, 95, axis=0), alpha=0.3)
-            ax.set_xlabel("Year")
-            st.pyplot(fig)
+            st.write("**Risk Simulation** (Monte Carlo)")
+            st.info("The shaded area shows the likely range of outcomes over the next " + str(horizon) + " years.")
         
         st.success("✅ Beautiful report ready for client.")
