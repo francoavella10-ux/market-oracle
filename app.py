@@ -1,12 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import yfinance as yf
 import warnings
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title="Long-Term Market Oracle — Advisor Edition", layout="wide", page_icon="🧠")
+st.set_page_config(page_title="Long-Term Market Oracle", layout="wide", page_icon="🧠")
 
 st.title("🧠 Long-Term Market Oracle")
 st.caption("**Beautiful Client Report**")
@@ -19,7 +18,7 @@ weights_input = st.sidebar.text_input("Weights (comma separated)", "0.4,0.3,0.3"
 horizon = st.sidebar.slider("Horizon (years)", 5, 20, 10)
 
 if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
-    with st.spinner("Generating beautiful report..."):
+    with st.spinner("Generating report..."):
         stocks = [s.strip().upper() for s in stocks_input.split(",")]
         try:
             weights = [float(w.strip()) for w in weights_input.split(",")]
@@ -41,15 +40,17 @@ if st.sidebar.button("🚀 Generate Beautiful Report", type="primary"):
                 data = yf.download(stock, period="5y", progress=False)
                 if not data.empty:
                     st.line_chart(data['Close'])
+                    last_price = float(data['Close'].iloc[-1])
                 else:
-                    st.write("Chart data not available at the moment.")
+                    last_price = 100
+                    st.write("Chart data temporarily unavailable")
             except:
-                st.write("Chart unavailable (temporary issue with data provider)")
+                last_price = 100
+                st.write("Chart temporarily unavailable")
             
             st.write("**Sector Outlook** (JP Morgan): Strong AI and innovation tailwinds.")
             
             st.write("**Risk Simulation**")
-            last_price = float(data['Close'].iloc[-1]) if not data.empty else 100
             sims = 500
             paths = []
             for _ in range(sims):
